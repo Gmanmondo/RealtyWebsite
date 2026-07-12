@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>At Home With Dallas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="home.css">
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg class="logo-mark" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <path d="M20 4 L36 18 V36 H24 V24 H16 V36 H4 V18 Z" stroke="#f4efe4" stroke-width="1.4" fill="none" stroke-linejoin="round"/>
+    </svg>
+    <div class="logo-text">
+      <span class="top">At Home With Dallas</span>
+      <span class="bottom">REAL ESTATE</span>
+    </div>
+  </div>
+
+  <nav class="nav-center">
+    <a href="#worth">What's Your Home Worth?</a>
+  </nav>
+
+  <div class="nav-right">
+    <a class="icon-btn" href="tel:" aria-label="Call">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4efe4" stroke-width="1.5"><path d="M6.6 10.8c1.4 2.8 3.7 5.1 6.5 6.5l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.5.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1C10.7 21 3 13.3 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.2.2 2.4.6 3.5.1.4 0 .8-.2 1L6.6 10.8z"/></svg>
+    </a>
+    <a class="icon-btn" href="mailto:" aria-label="Email">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#f4efe4" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="1"/><path d="M3 6l9 7 9-7"/></svg>
+    </a>
+    <button class="menu-btn" aria-label="Open menu"><span><i></i></span></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-thumb">
+    <img src="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?q=80&w=800&auto=format&fit=crop" alt="Bright renovated kitchen with white cabinetry and a dark wood island">
+  </div>
+
+  <div style="position:relative;">
+    <h1 class="hero-headline">Real Estate,<br>Rooted in Trust</h1>
+    <div class="scroll-cue">
+      SCROLL
+      <div class="chevron">⌄</div>
+    </div>
+  </div>
+
+  <div class="hero-copy">
+    <p>Buying or selling, every step with Dallas is guided by the same principle: clear communication, honest advice, and a plan built around your goals.</p>
+    <a class="btn" href="#approach">Meet Dallas</a>
+  </div>
+</section>
+
+<div class="feature-photo" id="featurePhoto">
+  <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?q=80&w=1600&auto=format&fit=crop" alt="Brick two-storey home with a landscaped backyard, patio, and mature trees">
+  <div class="feature-caption">
+    <span>FEATURED LISTING</span>
+    A home that shows as good as it lives
+  </div>
+</div>
+
+<section class="listings">
+  <div class="listings-head">
+    <div>
+      <span class="eyebrow">ON THE MARKET</span>
+      <h2>Featured Listings</h2>
+    </div>
+    <div class="listings-arrows">
+      <button class="arrow-btn" id="scrollLeft" aria-label="Scroll listings left">←</button>
+      <button class="arrow-btn" id="scrollRight" aria-label="Scroll listings right">→</button>
+    </div>
+  </div>
+
+  <div class="listings-track" id="listingsTrack">
+    <p class="listings-status" id="listingsStatus">Loading listings…</p>
+  </div>
+</section>
+
+<script>
+  const fp = document.getElementById('featurePhoto');
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{
+      if(e.isIntersecting){ fp.classList.add('in-view'); io.disconnect(); }
+    });
+  }, {threshold:0.2});
+  io.observe(fp);
+
+  /* =========================================================
+     FEATURED LISTINGS — powered by Airtable
+     -----------------------------------------------------
+     1. Create a free base at airtable.com with a table called
+        "Listings" and these columns:
+          Price        (Number, currency formatting)
+          Address      (Single line text)
+          Beds         (Number)
+          Baths        (Number)
+          SqFt         (Single line text, e.g. "3000-3500")
+          Status       (Single select: Active / Sold / Pending)
+          MLSNumber    (Single line text)
+          Photo        (Attachment — upload the listing photo)
+          Order        (Number — controls left-to-right order)
+
+     2. Go to airtable.com/create/tokens and create a
+        Personal Access Token scoped to ONLY:
+          - This one base
+          - "data.records:read" permission (read-only —
+            do NOT grant the write/create scope)
+
+     3. Paste your Base ID, Table name, and that token below.
+        This token can only ever read data — even if someone
+        views your page source, they cannot use it to add,
+        edit, or delete a listing. Only people logged into
+        your Airtable account can do that.
+     ========================================================= */
+  const AIRTABLE_BASE_ID   = 'appVGPMU6zQ6JRbZM';       // e.g. 'appXXXXXXXXXXXXXX'
+  const AIRTABLE_TABLE     = 'Listings';
+  const AIRTABLE_TOKEN     = 'patbHkHPJ9RVFtr6Y.53a4f257e6ad5287f3bdb1aab009684def1fc9ff11350c0e45a93e7b97beafe7';
+
+  const track  = document.getElementById('listingsTrack');
+  const status = document.getElementById('listingsStatus');
+
+  async function loadListings(){
+    const isConfigured = AIRTABLE_BASE_ID !== 'YOUR_BASE_ID' && AIRTABLE_TOKEN !== 'YOUR_READ_ONLY_TOKEN';
+    if(!isConfigured){
+      status.textContent = 'Connect your Airtable base to show live listings here.';
+      return;
+    }
+
+    try{
+      const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}?sort%5B0%5D%5Bfield%5D=Order&sort%5B0%5D%5Bdirection%5D=asc`;
+      const res = await fetch(url, {
+        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` }
+      });
+      if(!res.ok) throw new Error(`Airtable responded ${res.status}`);
+      const data = await res.json();
+      renderListings(data.records || []);
+    }catch(err){
+      console.error('Could not load listings from Airtable:', err);
+      status.textContent = "Listings couldn't be loaded right now — please check back shortly.";
+    }
+  }
+
+  function renderListings(records){
+    if(records.length === 0){
+      status.textContent = 'No active listings at the moment — check back soon.';
+      return;
+    }
+
+    track.innerHTML = '';
+
+    records.forEach(record=>{
+      const f = record.fields;
+      const photoUrl = f.Photo && f.Photo[0] ? f.Photo[0].url : '';
+      const price = typeof f.Price === 'number'
+        ? f.Price.toLocaleString('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0})
+        : (f.Price || '');
+
+      const card = document.createElement('article');
+      card.className = 'listing-card';
+      card.innerHTML = `
+        <div class="reveal-mask"></div>
+        <div class="listing-photo">
+          <span class="status-tag">${f.Status || 'ACTIVE'}</span>
+          <img src="${photoUrl}" alt="${f.Address || 'Listing photo'}">
+        </div>
+        <div class="listing-info">
+          <p class="listing-price">${price}</p>
+          <p class="listing-address">${f.Address || ''}</p>
+          <p class="listing-meta">${f.Beds ?? '–'} beds · ${f.Baths ?? '–'} baths · ${f.SqFt || ''} sqft</p>
+          <p class="listing-id">#${f.MLSNumber || ''}</p>
+        </div>
+      `;
+      track.appendChild(card);
+    });
+
+    setupScrollArrows();
+    setupRevealAnimation();
+  }
+
+  function setupScrollArrows(){
+    const step = () => track.querySelector('.listing-card').offsetWidth + 24;
+    document.getElementById('scrollLeft').addEventListener('click', ()=>{
+      track.scrollBy({left:-step(), behavior:'smooth'});
+    });
+    document.getElementById('scrollRight').addEventListener('click', ()=>{
+      track.scrollBy({left:step(), behavior:'smooth'});
+    });
+  }
+
+  function setupRevealAnimation(){
+    const cards = document.querySelectorAll('.listing-card');
+    cards.forEach((card, i)=>{
+      card.querySelector('.reveal-mask').style.transitionDelay = `${i * 0.12}s`;
+    });
+
+    const cardObserver = new IntersectionObserver((entries)=>{
+      entries.forEach(entry=>{
+        if(entry.isIntersecting){
+          entry.target.classList.add('revealed');
+          cardObserver.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.25});
+
+    cards.forEach(card => cardObserver.observe(card));
+  }
+
+  loadListings();
+</script>
+
+</body>
+</html>
