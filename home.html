@@ -111,6 +111,29 @@
       </div>
     </div>
 
+    <div class="aboutMe">
+      <h1>Meet Dallas</h1>
+      <div class="portrait-frame" id="portraitFrame">
+        <div class="reveal-mask-v"></div>
+        <img
+          src="/Images/DallasPfp.jpg"
+          alt="Dallas, a real estate agent, smiling in front of the camera in a staged home"
+        />
+      </div>
+      <div class="tall-frame" id="tallFrame">
+        <div class="reveal-mask-h"></div>
+        <img
+          src="/Images/DallasTyping.jpg"
+          alt="Dallas, a real estate agent, smiling in front of the camera in a staged home"
+        />
+      </div>
+      <p>
+        Dallas is a licensed real estate agent with a passion for helping people
+        find their dream homes. With years of experience in the industry, he
+        brings a wealth of knowledge and expertise to every transaction.
+      </p>
+    </div>
+
     <section class="listings">
       <div class="listings-head">
         <div>
@@ -154,6 +177,23 @@
         { threshold: 0.2 },
       );
       io.observe(fp);
+
+      const portraitFrame = document.getElementById("portraitFrame");
+      const tallFrame = document.getElementById("tallFrame");
+      const aboutSection = document.querySelector(".aboutMe");
+      const aboutObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((e) => {
+            if (e.isIntersecting) {
+              portraitFrame.classList.add("revealed");
+              tallFrame.classList.add("revealed");
+              aboutObserver.disconnect();
+            }
+          });
+        },
+        { threshold: 0.2 },
+      );
+      aboutObserver.observe(aboutSection);
 
       /* =========================================================
      FEATURED LISTINGS — powered by Airtable via a secure proxy
@@ -206,7 +246,7 @@
             typeof listing.price === "number"
               ? listing.price.toLocaleString("en-US", {
                   style: "currency",
-                  currency: "USD",
+                  currency: "CAD",
                   maximumFractionDigits: 0,
                 })
               : listing.price || "";
@@ -272,5 +312,11 @@
 
       loadListings();
     </script>
+
+    <div class="footer">
+      <p>
+        &copy; 2024 At Home With Dallas. All rights reserved. | <a href="mailto:">Email</a> | <a href="tel:">Call</a>
+      </p>
+    </div>
   </body>
 </html>
