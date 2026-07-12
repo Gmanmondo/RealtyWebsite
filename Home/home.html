@@ -91,88 +91,67 @@
   io.observe(fp);
 
   /* =========================================================
-     FEATURED LISTINGS — powered by Airtable
+     FEATURED LISTINGS — powered by Airtable via a secure proxy
      -----------------------------------------------------
-     1. Create a free base at airtable.com with a table called
-        "Listings" and these columns:
-          Price        (Number, currency formatting)
-          Address      (Single line text)
-          Beds         (Number)
-          Baths        (Number)
-          SqFt         (Single line text, e.g. "3000-3500")
-          Status       (Single select: Active / Sold / Pending)
-          MLSNumber    (Single line text)
-          Photo        (Attachment — upload the listing photo)
-          Order        (Number — controls left-to-right order)
+     The browser never talks to Airtable directly and never sees
+     your Airtable token. Instead it calls /api/listings, which
+     netlify.toml redirects to a small serverless function (see
+     /netlify/functions/listings.js) that runs on Netlify's
+     servers. The token lives there as an environment variable —
+     set it in your Netlify project:
 
-     2. Go to airtable.com/create/tokens and create a
-        Personal Access Token scoped to ONLY:
-          - This one base
-          - "data.records:read" permission (read-only —
-            do NOT grant the write/create scope)
+       Netlify dashboard → your site → Site configuration →
+       Environment variables → add:
+         AIRTABLE_BASE_ID   = appXXXXXXXXXXXXXX
+         AIRTABLE_TABLE     = Listings
+         AIRTABLE_TOKEN     = patXXXXXXXXXXXXXX...
 
-     3. Paste your Base ID, Table name, and that token below.
-        This token can only ever read data — even if someone
-        views your page source, they cannot use it to add,
-        edit, or delete a listing. Only people logged into
-        your Airtable account can do that.
+     Redeploy after adding them. Your Airtable table should have
+     these columns: Price, Address, Beds, Baths, SqFt, Status,
+     MLSNumber, Photo (attachment), Order (number, for sorting).
      ========================================================= */
-  const AIRTABLE_BASE_ID   = 'appVGPMU6zQ6JRbZM';       // e.g. 'appXXXXXXXXXXXXXX'
-  const AIRTABLE_TABLE     = 'Listings';
-  const AIRTABLE_TOKEN     = 'patbHkHPJ9RVFtr6Y.53a4f257e6ad5287f3bdb1aab009684def1fc9ff11350c0e45a93e7b97beafe7';
 
   const track  = document.getElementById('listingsTrack');
   const status = document.getElementById('listingsStatus');
 
   async function loadListings(){
-    const isConfigured = AIRTABLE_BASE_ID !== 'YOUR_BASE_ID' && AIRTABLE_TOKEN !== 'YOUR_READ_ONLY_TOKEN';
-    if(!isConfigured){
-      status.textContent = 'Connect your Airtable base to show live listings here.';
-      return;
-    }
-
     try{
-      const url = `https://api.airtable.com/v0/${AIRTABLE_BASE_ID}/${encodeURIComponent(AIRTABLE_TABLE)}?sort%5B0%5D%5Bfield%5D=Order&sort%5B0%5D%5Bdirection%5D=asc`;
-      const res = await fetch(url, {
-        headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` }
-      });
-      if(!res.ok) throw new Error(`Airtable responded ${res.status}`);
+      const res = await fetch('/api/listings');
+      if(!res.ok) throw new Error(`Server responded ${res.status}`);
       const data = await res.json();
-      renderListings(data.records || []);
+      renderListings(data.listings || []);
     }catch(err){
-      console.error('Could not load listings from Airtable:', err);
+      console.error('Could not load listings:', err);
       status.textContent = "Listings couldn't be loaded right now — please check back shortly.";
     }
   }
 
-  function renderListings(records){
-    if(records.length === 0){
+  function renderListings(listings){
+    if(listings.length === 0){
       status.textContent = 'No active listings at the moment — check back soon.';
       return;
     }
 
     track.innerHTML = '';
 
-    records.forEach(record=>{
-      const f = record.fields;
-      const photoUrl = f.Photo && f.Photo[0] ? f.Photo[0].url : '';
-      const price = typeof f.Price === 'number'
-        ? f.Price.toLocaleString('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0})
-        : (f.Price || '');
+    listings.forEach(listing=>{
+      const price = typeof listing.price === 'number'
+        ? listing.price.toLocaleString('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0})
+        : (listing.price || '');
 
       const card = document.createElement('article');
       card.className = 'listing-card';
       card.innerHTML = `
         <div class="reveal-mask"></div>
         <div class="listing-photo">
-          <span class="status-tag">${f.Status || 'ACTIVE'}</span>
-          <img src="${photoUrl}" alt="${f.Address || 'Listing photo'}">
+          <span class="status-tag">${listing.status}</span>
+          <img src="${listing.photoUrl}" alt="${listing.address || 'Listing photo'}">
         </div>
         <div class="listing-info">
           <p class="listing-price">${price}</p>
-          <p class="listing-address">${f.Address || ''}</p>
-          <p class="listing-meta">${f.Beds ?? '–'} beds · ${f.Baths ?? '–'} baths · ${f.SqFt || ''} sqft</p>
-          <p class="listing-id">#${f.MLSNumber || ''}</p>
+          <p class="listing-address">${listing.address}</p>
+          <p class="listing-meta">${listing.beds ?? '–'} beds · ${listing.baths ?? '–'} baths · ${listing.sqft} sqft</p>
+          <p class="listing-id">#${listing.mlsNumber}</p>
         </div>
       `;
       track.appendChild(card);
