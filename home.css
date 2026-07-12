@@ -319,25 +319,6 @@ header{
   color:var(--bg);
 }
 
-.listings-viewport{
-  position:relative;
-  overflow:hidden;
-}
-
-.reveal-mask-row{
-  position:absolute;
-  inset:0;
-  background:var(--bg);
-  z-index:10;
-  transform:translateX(0);
-  transition:transform 1.1s cubic-bezier(.65,0,.35,1);
-  pointer-events:none;
-}
-
-.listings-viewport.revealed .reveal-mask-row{
-  transform:translateX(101%);
-}
-
 .listings-track{
   display:flex;
   gap:24px;
@@ -363,6 +344,22 @@ header{
   scroll-snap-align:start;
   background:var(--cream);
   color:#241f16;
+  position:relative;
+  overflow:hidden;
+}
+
+.reveal-mask{
+  position:absolute;
+  inset:0;
+  background:var(--bg);
+  z-index:5;
+  transform:translateX(0);
+  transition:transform .85s cubic-bezier(.65,0,.35,1);
+  pointer-events:none;
+}
+
+.listing-card.revealed .reveal-mask{
+  transform:translateX(101%);
 }
 
 .listing-photo{

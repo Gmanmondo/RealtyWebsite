@@ -76,11 +76,8 @@
     </div>
   </div>
 
-  <div class="listings-viewport" id="listingsViewport">
-    <div class="reveal-mask-row"></div>
-    <div class="listings-track" id="listingsTrack">
-      <p class="listings-status" id="listingsStatus">Loading listings…</p>
-    </div>
+  <div class="listings-track" id="listingsTrack">
+    <p class="listings-status" id="listingsStatus">Loading listings…</p>
   </div>
 </section>
 
@@ -145,6 +142,7 @@
       const card = document.createElement('article');
       card.className = 'listing-card';
       card.innerHTML = `
+        <div class="reveal-mask"></div>
         <div class="listing-photo">
           <span class="status-tag">${listing.status}</span>
           <img src="${listing.photoUrl}" alt="${listing.address || 'Listing photo'}">
@@ -174,18 +172,25 @@
   }
 
   function setupRevealAnimation(){
-    const viewport = document.getElementById('listingsViewport');
+    const cards = document.querySelectorAll('.listing-card');
+    cards.forEach((card, i)=>{
+      card.querySelector('.reveal-mask').style.transitionDelay = `${i * 0.12}s`;
+    });
 
-    const rowObserver = new IntersectionObserver((entries)=>{
+    // Watch the section as a whole — fires once, the moment the row first
+    // scrolls into view. All cards reveal together on that single trigger,
+    // so scrolling the row horizontally afterward never re-triggers anything.
+    const section = document.querySelector('.listings');
+    const sectionObserver = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
         if(entry.isIntersecting){
-          viewport.classList.add('revealed');
-          rowObserver.unobserve(entry.target);
+          cards.forEach(card => card.classList.add('revealed'));
+          sectionObserver.unobserve(entry.target);
         }
       });
-    }, {threshold:0.25});
+    }, {threshold:0.15});
 
-    rowObserver.observe(viewport);
+    sectionObserver.observe(section);
   }
 
   loadListings();
