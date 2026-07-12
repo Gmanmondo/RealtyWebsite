@@ -76,8 +76,11 @@
     </div>
   </div>
 
-  <div class="listings-track" id="listingsTrack">
-    <p class="listings-status" id="listingsStatus">Loading listings…</p>
+  <div class="listings-viewport" id="listingsViewport">
+    <div class="reveal-mask-row"></div>
+    <div class="listings-track" id="listingsTrack">
+      <p class="listings-status" id="listingsStatus">Loading listings…</p>
+    </div>
   </div>
 </section>
 
@@ -136,13 +139,12 @@
 
     listings.forEach(listing=>{
       const price = typeof listing.price === 'number'
-        ? listing.price.toLocaleString('en-US', {style:'currency', currency:'CAD', maximumFractionDigits:0})
+        ? listing.price.toLocaleString('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0})
         : (listing.price || '');
 
       const card = document.createElement('article');
       card.className = 'listing-card';
       card.innerHTML = `
-        <div class="reveal-mask"></div>
         <div class="listing-photo">
           <span class="status-tag">${listing.status}</span>
           <img src="${listing.photoUrl}" alt="${listing.address || 'Listing photo'}">
@@ -172,21 +174,18 @@
   }
 
   function setupRevealAnimation(){
-    const cards = document.querySelectorAll('.listing-card');
-    cards.forEach((card, i)=>{
-      card.querySelector('.reveal-mask').style.transitionDelay = `${i * 0.12}s`;
-    });
+    const viewport = document.getElementById('listingsViewport');
 
-    const cardObserver = new IntersectionObserver((entries)=>{
+    const rowObserver = new IntersectionObserver((entries)=>{
       entries.forEach(entry=>{
         if(entry.isIntersecting){
-          entry.target.classList.add('revealed');
-          cardObserver.unobserve(entry.target);
+          viewport.classList.add('revealed');
+          rowObserver.unobserve(entry.target);
         }
       });
     }, {threshold:0.25});
 
-    cards.forEach(card => cardObserver.observe(card));
+    rowObserver.observe(viewport);
   }
 
   loadListings();
