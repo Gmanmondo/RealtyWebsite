@@ -136,7 +136,7 @@
 
     listings.forEach(listing=>{
       const price = typeof listing.price === 'number'
-        ? listing.price.toLocaleString('en-US', {style:'currency', currency:'USD', maximumFractionDigits:0})
+        ? listing.price.toLocaleString('en-US', {style:'currency', currency:'CAD', maximumFractionDigits:0})
         : (listing.price || '');
 
       const card = document.createElement('article');
