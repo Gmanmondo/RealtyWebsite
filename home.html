@@ -167,14 +167,10 @@
       <h2>My Socials.</h2>
 
       <div class="socials-grid">
-        <div class="tape-column" id="youtubeTape" data-direction="up">
+        <div class="tape-column" id="youtubeTape" data-direction="right">
           <div class="tape-track" id="youtubeTrack">
             <p class="tape-placeholder">Loading videos…</p>
           </div>
-        </div>
-
-        <div class="tape-column" id="instagramTape">
-          <p class="tape-placeholder">Instagram feed coming soon</p>
         </div>
       </div>
     </section>
@@ -331,10 +327,10 @@
       /* =========================================================
          SOCIALS TAPE ENGINE
          -----------------------------------------------------
-         Drives the continuous scroll for each .tape-column via
-         real scrollTop (not a CSS animation), and hands control
-         over to native wheel/touch/momentum scrolling on that
-         exact same property with no fighting between the two.
+         Drives the continuous scroll for the YouTube .tape-column
+         via real scrollLeft (not a CSS animation), and hands
+         control over to native wheel/touch/momentum scrolling on
+         that exact same property with no fighting between the two.
 
          Speed eases toward a target every frame rather than
          snapping — that single mechanism gives both the slow-stop
@@ -346,52 +342,56 @@
          scrollbar dragging, so there's no separate wheel/touch
          logic that can fight the animation loop or each other.
 
-         Each column needs a data-direction attribute: "up" (content
-         drifts upward — used for YouTube) or "down" (drifts downward
-         — for Instagram later). Content inside .tape-track should be
-         tripled (three identical sets of cards) so there's a buffer
-         to scroll into before the loop has to silently wrap.
+         data-direction="right" means the cards visually drift from
+         left to right — which means scrollLeft decreases each frame
+         (moving the viewport backward reveals content sliding right).
+         data-direction="left" would do the reverse, a standard
+         ticker-style right-to-left drift, for future use.
 
-         initTapeColumn expects the tripled cards to already be in the
-         DOM when it's called — for YouTube that means waiting on the
-         API response first (see loadYouTubeTape below), rather than
-         wiring it up at page load like a static column would be.
+         Content inside .tape-track should be tripled (three
+         identical sets of cards) so there's a buffer to scroll into
+         before the loop has to silently wrap.
+
+         initTapeColumn expects the tripled cards to already be in
+         the DOM when it's called — for YouTube that means waiting
+         on the API response first (see loadYouTubeTape below).
          ========================================================= */
       function initTapeColumn(column){
         const track = column.querySelector('.tape-track');
         if(!track) return;
 
-        const direction = column.dataset.direction === 'down' ? -1 : 1;
+        // 'right' = cards drift left→right on screen = scrollLeft decreases
+        const directionSign = column.dataset.direction === 'left' ? 1 : -1;
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const MAX_SPEED = prefersReducedMotion ? 0 : 0.5;  // px per frame, full auto-scroll pace
         const RESUME_DELAY = 1500;    // ms after leaving before auto-scroll starts easing back in
         const EASE = 0.05;            // how quickly speed eases toward its target each frame
 
         const setCount = 3;
-        const setHeight = track.scrollHeight / setCount;
-        let scrollPos = setHeight;    // our own float tracker — never rounded, unlike DOM scrollTop
-        column.scrollTop = scrollPos; // start centred in the middle copy
+        const setWidth = track.scrollWidth / setCount;
+        let scrollPos = setWidth;     // our own float tracker — never rounded, unlike DOM scrollLeft
+        column.scrollLeft = scrollPos; // start centred in the middle copy
 
         let targetSpeed = MAX_SPEED;
         let currentSpeed = MAX_SPEED;
         let resumeTimer = null;
 
-        // True only for the instant we ourselves write column.scrollTop, so the
+        // True only for the instant we ourselves write column.scrollLeft, so the
         // 'scroll' handler below can tell "we did that" apart from "the user did that".
         let isAutoScroll = false;
 
-        function writeScrollTop(){
+        function writeScrollLeft(){
           isAutoScroll = true;
-          column.scrollTop = scrollPos;
+          column.scrollLeft = scrollPos;
         }
 
         function wrap(){
-          if(scrollPos < setHeight * 0.5){
-            scrollPos += setHeight;
-            writeScrollTop();
-          }else if(scrollPos > setHeight * 1.5){
-            scrollPos -= setHeight;
-            writeScrollTop();
+          if(scrollPos < setWidth * 0.5){
+            scrollPos += setWidth;
+            writeScrollLeft();
+          }else if(scrollPos > setWidth * 1.5){
+            scrollPos -= setWidth;
+            writeScrollLeft();
           }
         }
 
@@ -412,9 +412,9 @@
         function tick(){
           currentSpeed += (targetSpeed - currentSpeed) * EASE;
           if(Math.abs(currentSpeed) > 0.002){
-            scrollPos += direction * currentSpeed;
+            scrollPos += directionSign * currentSpeed;
             wrap();
-            writeScrollTop();
+            writeScrollLeft();
           }
           requestAnimationFrame(tick);
         }
@@ -431,7 +431,7 @@
           // A real, user-driven scroll happened: stop the animation immediately
           // and resync our tracker to wherever the user actually left it.
           pause();
-          scrollPos = column.scrollTop;
+          scrollPos = column.scrollLeft;
           wrap();
           scheduleResume();
         }, {passive:true});

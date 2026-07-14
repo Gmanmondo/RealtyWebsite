@@ -581,28 +581,26 @@ header{
 }
 
 .socials-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:48px;
-  max-width:900px;
-  margin:0 auto;
-  justify-items:center;
+  display:flex;
+  justify-content:flex-start;
+  padding-left:30px;
 }
 
+/* Tape track is now horizontal: 75% of the viewport width, cards
+   drifting left to right, with fading edges so cards feel like
+   they're passing through a window rather than hard-cutting off. */
 .tape-column{
   position:relative;
-  width:100%;
-  max-width:360px;
-  height:760px;
-  overflow-y:auto;
-  overflow-x:hidden;
+  width:75vw;
+  max-width:1400px;
+  height:320px;
+  overflow-x:auto;
+  overflow-y:hidden;
   scrollbar-width:none;
   -ms-overflow-style:none;
-  border:1px solid rgba(36,31,22,0.1);
-  background:#fff;
-  /* fade the top/bottom edges so cards feel like they're passing through a window */
-  -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
-  mask-image:linear-gradient(to bottom, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+  background:transparent;
+  -webkit-mask-image:linear-gradient(to right, transparent 0, #000 64px, #000 calc(100% - 50px), transparent 100%);
+  mask-image:linear-gradient(to right, transparent 0, #000 64px, #000 calc(100% - 50px), transparent 100%);
 }
 
 .tape-column::-webkit-scrollbar{
@@ -611,21 +609,34 @@ header{
 
 .tape-track{
   display:flex;
-  flex-direction:column;
-  gap:20px;
+  flex-direction:row;
+  gap:24px;
   padding:20px;
+  height:100%;
+  align-items:stretch;
 }
 
 .tape-card{
+  flex:0 0 auto;
+  width:300px;
   display:block;
-  width:100%;
   text-align:left;
   font:inherit;
   color:inherit;
   background:#fff;
-  border:1px solid rgba(36,31,22,0.08);
+  border:2px solid rgba(36,31,22,0.24);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 10px 24px rgba(36,31,22,0.16);
   padding:0;
   cursor:pointer;
+  transition:transform .3s ease, box-shadow .3s ease, border-color .3s ease;
+}
+
+.tape-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 16px 32px rgba(36,31,22,0.22);
+  border-color:rgba(36,31,22,0.34);
 }
 
 .tape-thumb{
@@ -643,6 +654,10 @@ header{
   font-weight:500;
   line-height:1.4;
   margin-bottom:6px;
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  overflow:hidden;
 }
 
 .tape-date{
@@ -661,12 +676,24 @@ header{
   text-align:center;
 }
 
-@media (max-width: 720px){
-  .socials-grid{
-    grid-template-columns:1fr;
+@media (max-width: 900px){
+  .tape-column{
+    width:92vw;
   }
+  .socials-grid{
+    padding-left:24px;
+  }
+}
+
+@media (max-width: 720px){
   .socials{
     padding:80px 24px 100px;
+  }
+  .socials-grid{
+    padding-left:0;
+  }
+  .tape-card{
+    width:250px;
   }
 }
 
