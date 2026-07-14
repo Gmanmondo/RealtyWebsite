@@ -163,6 +163,22 @@
       </div>
     </section>
 
+    <section class="socials">
+      <h2>My Socials.</h2>
+
+      <div class="socials-grid">
+        <div class="tape-column" id="youtubeTape" data-direction="up">
+          <div class="tape-track" id="youtubeTrack">
+            <p class="tape-placeholder">Loading videos…</p>
+          </div>
+        </div>
+
+        <div class="tape-column" id="instagramTape">
+          <p class="tape-placeholder">Instagram feed coming soon</p>
+        </div>
+      </div>
+    </section>
+
     <script>
       const fp = document.getElementById("featurePhoto");
       const io = new IntersectionObserver(
@@ -311,6 +327,209 @@
       }
 
       loadListings();
+
+      /* =========================================================
+         SOCIALS TAPE ENGINE
+         -----------------------------------------------------
+         Drives the continuous scroll for each .tape-column via
+         real scrollTop (not a CSS animation), and hands control
+         over to native wheel/touch/momentum scrolling on that
+         exact same property with no fighting between the two.
+
+         Speed eases toward a target every frame rather than
+         snapping — that single mechanism gives both the slow-stop
+         on hover and the slow-start on resume for free.
+
+         A single native 'scroll' listener is the one source of
+         truth for "did the user scroll this" — it fires the same
+         way for wheel, trackpad momentum, touch drag, and
+         scrollbar dragging, so there's no separate wheel/touch
+         logic that can fight the animation loop or each other.
+
+         Each column needs a data-direction attribute: "up" (content
+         drifts upward — used for YouTube) or "down" (drifts downward
+         — for Instagram later). Content inside .tape-track should be
+         tripled (three identical sets of cards) so there's a buffer
+         to scroll into before the loop has to silently wrap.
+
+         initTapeColumn expects the tripled cards to already be in the
+         DOM when it's called — for YouTube that means waiting on the
+         API response first (see loadYouTubeTape below), rather than
+         wiring it up at page load like a static column would be.
+         ========================================================= */
+      function initTapeColumn(column){
+        const track = column.querySelector('.tape-track');
+        if(!track) return;
+
+        const direction = column.dataset.direction === 'down' ? -1 : 1;
+        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const MAX_SPEED = prefersReducedMotion ? 0 : 0.5;  // px per frame, full auto-scroll pace
+        const RESUME_DELAY = 1500;    // ms after leaving before auto-scroll starts easing back in
+        const EASE = 0.05;            // how quickly speed eases toward its target each frame
+
+        const setCount = 3;
+        const setHeight = track.scrollHeight / setCount;
+        let scrollPos = setHeight;    // our own float tracker — never rounded, unlike DOM scrollTop
+        column.scrollTop = scrollPos; // start centred in the middle copy
+
+        let targetSpeed = MAX_SPEED;
+        let currentSpeed = MAX_SPEED;
+        let resumeTimer = null;
+
+        // True only for the instant we ourselves write column.scrollTop, so the
+        // 'scroll' handler below can tell "we did that" apart from "the user did that".
+        let isAutoScroll = false;
+
+        function writeScrollTop(){
+          isAutoScroll = true;
+          column.scrollTop = scrollPos;
+        }
+
+        function wrap(){
+          if(scrollPos < setHeight * 0.5){
+            scrollPos += setHeight;
+            writeScrollTop();
+          }else if(scrollPos > setHeight * 1.5){
+            scrollPos -= setHeight;
+            writeScrollTop();
+          }
+        }
+
+        function pause(){
+          targetSpeed = 0;
+          currentSpeed = 0; // stop instantly so it can't fight the user's own scrolling
+          if(resumeTimer){ clearTimeout(resumeTimer); resumeTimer = null; }
+        }
+
+        function scheduleResume(){
+          if(resumeTimer) clearTimeout(resumeTimer);
+          resumeTimer = setTimeout(()=>{
+            targetSpeed = MAX_SPEED;
+            resumeTimer = null;
+          }, RESUME_DELAY);
+        }
+
+        function tick(){
+          currentSpeed += (targetSpeed - currentSpeed) * EASE;
+          if(Math.abs(currentSpeed) > 0.002){
+            scrollPos += direction * currentSpeed;
+            wrap();
+            writeScrollTop();
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+
+        // ---- Single source of truth for ALL user-driven scrolling: wheel,
+        // trackpad momentum, touch drag, and scrollbar drag all fire this the
+        // same way, so there's no separate touch/wheel logic to fight itself ----
+        column.addEventListener('scroll', ()=>{
+          if(isAutoScroll){
+            isAutoScroll = false; // this write was ours, ignore it
+            return;
+          }
+          // A real, user-driven scroll happened: stop the animation immediately
+          // and resync our tracker to wherever the user actually left it.
+          pause();
+          scrollPos = column.scrollTop;
+          wrap();
+          scheduleResume();
+        }, {passive:true});
+
+        // ---- Desktop: hover eases to a stop, native wheel/trackpad
+        // scroll just works because the column is a real scrollable element ----
+        column.addEventListener('mouseenter', pause);
+        column.addEventListener('mouseleave', scheduleResume);
+
+        track.addEventListener('click', (e)=>{
+          const card = e.target.closest('.tape-card');
+          if(card && card.dataset.url){
+            window.open(card.dataset.url, '_blank', 'noopener');
+          }
+        });
+      }
+
+      /* =========================================================
+         YOUTUBE FEED — powered by the YouTube Data API v3 via a
+         secure proxy (same pattern as the Airtable listings above:
+         the browser calls /api/youtube, which netlify.toml redirects
+         to /netlify/functions/youtube.js. The API key lives there as
+         an environment variable and never reaches the browser.
+
+           Netlify dashboard → your site → Site configuration →
+           Environment variables → add:
+             YOUTUBE_API_KEY     = AIzaSy...
+             YOUTUBE_PLAYLIST_ID = UUxxxxxxxxxxxxxxxxxxxxxx
+
+         (Your uploads playlist ID is your channel ID with the
+         leading "UC" swapped for "UU".) Redeploy after adding them.
+         ========================================================= */
+
+      async function loadYouTubeTape() {
+        const youtubeColumn = document.getElementById("youtubeTape");
+        const youtubeTrackEl = document.getElementById("youtubeTrack");
+        if (!youtubeColumn || !youtubeTrackEl) return;
+
+        try {
+          const res = await fetch("/api/youtube");
+          if (!res.ok) throw new Error(`Server responded ${res.status}`);
+          const data = await res.json();
+          const videos = data.videos || [];
+
+          if (videos.length === 0) {
+            youtubeTrackEl.innerHTML =
+              '<p class="tape-placeholder">No videos found right now.</p>';
+            return;
+          }
+
+          renderYouTubeCards(youtubeColumn, youtubeTrackEl, videos);
+        } catch (err) {
+          console.error("Could not load YouTube videos:", err);
+          youtubeTrackEl.innerHTML =
+            '<p class="tape-placeholder">Videos couldn\'t be loaded right now.</p>';
+        }
+      }
+
+      function formatPublishedDate(iso) {
+        const date = new Date(iso);
+        return date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+          year: "numeric",
+        });
+      }
+
+      function buildYouTubeCardHTML(video) {
+        return `
+      <button type="button" class="tape-card" data-url="${video.url}">
+        <div class="tape-thumb" style="background-image:url('${video.thumbnailUrl}');background-size:cover;background-position:center;"></div>
+        <div class="tape-info">
+          <p class="tape-title">${video.title}</p>
+          <p class="tape-date">${formatPublishedDate(video.publishedAt)}</p>
+        </div>
+      </button>
+    `;
+      }
+
+      function renderYouTubeCards(column, trackEl, videos) {
+        const oneSetHTML = videos.map(buildYouTubeCardHTML).join("");
+
+        // Tripled so initTapeColumn has its scroll-wrap buffer, same as
+        // the static markup used to provide by hand.
+        trackEl.innerHTML = oneSetHTML + oneSetHTML + oneSetHTML;
+
+        const cards = trackEl.querySelectorAll(".tape-card");
+        cards.forEach((card, i) => {
+          if (i >= videos.length) {
+            card.setAttribute("tabindex", "-1");
+            card.setAttribute("aria-hidden", "true");
+          }
+        });
+
+        initTapeColumn(column);
+      }
+
+      loadYouTubeTape();
     </script>
 
     <div class="footer">

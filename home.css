@@ -284,7 +284,7 @@ header{
   row-gap:28px;
   max-width:1100px;
   margin:0 auto;
-  padding:100px 48px 130px;
+  padding:110px 48px 130px;
   align-items:center;
 }
 
@@ -301,8 +301,8 @@ header{
   position:relative;
   overflow:hidden;
   width:100%;
-  max-width:450px;
-  aspect-ratio:6/9;
+  max-width:270px;
+  aspect-ratio:4/5;
   justify-self:center;
 }
 
@@ -315,14 +315,19 @@ header{
   transition:filter .5s ease;
 }
 
+.portrait-frame:hover img{
+  filter:grayscale(0);
+}
+
 .tall-frame{
   grid-area:tall;
   position:relative;
   overflow:hidden;
-  
-  max-width:600px;
-  aspect-ratio:9/15;
+  width:100%;
+  max-width:340px;
+  aspect-ratio:3/4;
   justify-self:center;
+  align-self:center;
 }
 
 .tall-frame img{
@@ -364,7 +369,7 @@ header{
 
 .aboutMe p{
   grid-area:text;
-  font-size:1.15rem;
+  font-size:1rem;
   line-height:1.75;
   color:#e7e1d2;
   align-self:start;
@@ -558,6 +563,111 @@ header{
   .nav-center{display:none;}
   .hero-thumb{max-width:220px;}
   .scroll-cue{display:none;}
+}
+
+/* ---------- MY SOCIALS ---------- */
+.socials{
+  background:#f7f4ec;
+  color:#241f16;
+  padding:110px 48px 130px;
+  text-align:center;
+}
+
+.socials h2{
+  font-family:'Cormorant Garamond',serif;
+  font-weight:400;
+  font-size:clamp(2.2rem, 3.6vw, 3.2rem);
+  margin-bottom:64px;
+}
+
+.socials-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:48px;
+  max-width:900px;
+  margin:0 auto;
+  justify-items:center;
+}
+
+.tape-column{
+  position:relative;
+  width:100%;
+  max-width:360px;
+  height:760px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scrollbar-width:none;
+  -ms-overflow-style:none;
+  border:1px solid rgba(36,31,22,0.1);
+  background:#fff;
+  /* fade the top/bottom edges so cards feel like they're passing through a window */
+  -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+  mask-image:linear-gradient(to bottom, transparent 0, #000 40px, #000 calc(100% - 40px), transparent 100%);
+}
+
+.tape-column::-webkit-scrollbar{
+  display:none;
+}
+
+.tape-track{
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  padding:20px;
+}
+
+.tape-card{
+  display:block;
+  width:100%;
+  text-align:left;
+  font:inherit;
+  color:inherit;
+  background:#fff;
+  border:1px solid rgba(36,31,22,0.08);
+  padding:0;
+  cursor:pointer;
+}
+
+.tape-thumb{
+  width:100%;
+  aspect-ratio:16/9;
+  background:#e4ddce;
+}
+
+.tape-info{
+  padding:12px 14px 16px;
+}
+
+.tape-title{
+  font-size:0.9rem;
+  font-weight:500;
+  line-height:1.4;
+  margin-bottom:6px;
+}
+
+.tape-date{
+  font-size:0.78rem;
+  color:#8a8172;
+}
+
+.tape-placeholder{
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#a39a86;
+  font-size:0.9rem;
+  padding:0 24px;
+  text-align:center;
+}
+
+@media (max-width: 720px){
+  .socials-grid{
+    grid-template-columns:1fr;
+  }
+  .socials{
+    padding:80px 24px 100px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce){

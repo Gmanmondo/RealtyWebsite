@@ -11,3 +11,8 @@
   from = "/api/listings"
   to = "/.netlify/functions/listings"
   status = 200
+
+[[redirects]]
+  from = "/api/youtube"
+  to = "/.netlify/functions/youtube"
+  status = 200
