@@ -530,12 +530,168 @@
       }
 
       loadYouTubeTape();
+
+      /* =========================================================
+         CONTACT FORM — still a real Netlify Forms submission (the
+         data-netlify="true" attribute on the <form> is what tells
+         Netlify to detect and store it at deploy time), but sent via
+         fetch() instead of a native page POST so the browser never
+         navigates away. On success we show an animated toast bubble
+         and reset the form; on failure we show an error-state toast
+         instead — the page never navigates either way, and the
+         person's typed message isn't cleared if something goes wrong.
+
+         NOTE: Netlify Forms only work once the site is actually
+         deployed — Netlify detects forms by scanning the built HTML
+         at deploy time and processes submissions through its
+         production edge network. Running this locally via
+         `netlify dev` will always fail here (that's expected), since
+         dev doesn't replicate that pipeline. To test for real, either
+         deploy the site (`netlify deploy --prod`) or push a preview
+         deploy (`netlify deploy`, no --prod flag) and test on that URL.
+         ========================================================= */
+      const contactForm = document.getElementById("contactForm");
+      const contactToast = document.getElementById("contactToast");
+      const toastTitleEl = document.getElementById("toastTitle");
+      const toastBodyEl = document.getElementById("toastBody");
+      let toastHideTimer = null;
+
+      function showToast(state){
+        if(toastHideTimer) clearTimeout(toastHideTimer);
+
+        contactToast.classList.remove("toast-success", "toast-error");
+
+        if(state === "error"){
+          contactToast.classList.add("toast-error");
+          toastTitleEl.textContent = "Something went wrong";
+          toastBodyEl.textContent =
+            "Your message couldn't be sent — please try again, or email Dallas directly.";
+        } else {
+          contactToast.classList.add("toast-success");
+          toastTitleEl.textContent = "Message sent";
+          toastBodyEl.textContent =
+            "Thanks for reaching out — Dallas will respond as soon as possible.";
+        }
+
+        contactToast.classList.add("show");
+        toastHideTimer = setTimeout(()=>{
+          contactToast.classList.remove("show");
+          toastHideTimer = null;
+        }, 4500);
+      }
+
+      // Netlify Forms expects a standard urlencoded body, same shape
+      // a native form POST would send.
+      function encodeFormData(form){
+        return new URLSearchParams(new FormData(form)).toString();
+      }
+
+      async function handleContactSubmit(e){
+        e.preventDefault();
+
+        const submitBtn = contactForm.querySelector(".contact-submit");
+        const originalLabel = submitBtn ? submitBtn.textContent : "";
+        if(submitBtn){
+          submitBtn.disabled = true;
+          submitBtn.textContent = "Sending…";
+        }
+
+        try {
+          const res = await fetch("/", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: encodeFormData(contactForm),
+          });
+
+          if(!res.ok) throw new Error(`Server responded ${res.status}`);
+
+          contactForm.reset();
+          showToast("success");
+        } catch (err) {
+          console.error("Contact form submission failed:", err);
+          showToast("error");
+        } finally {
+          if(submitBtn){
+            submitBtn.disabled = false;
+            submitBtn.textContent = originalLabel;
+          }
+        }
+      }
+
+      if(contactForm){
+        contactForm.addEventListener("submit", handleContactSubmit);
+      }
     </script>
+
+    <section class="contact" id="contact">
+      <div class="contact-grid">
+        <div class="contact-intro">
+          <h2>Let's Talk Real Estate</h2>
+          <p>
+            Whether you're buying, selling, or just curious about the
+            market, Dallas is here to help you take the next step with
+            confidence. Reach out below and expect a reply soon.
+          </p>
+        </div>
+
+        <!--
+          NETLIFY FORMS — no serverless function needed here.
+          Netlify scans the built HTML at deploy time for any <form>
+          with data-netlify="true" and wires it up automatically. Every
+          submission shows up under Site configuration → Forms in your
+          Netlify dashboard, and you can turn on email notifications
+          there too (Forms → Settings and usage → Form notifications).
+
+          netlify-honeypot="bot-field" adds simple spam protection: a
+          field hidden from real visitors via CSS that only bots tend
+          to fill in. Netlify silently discards submissions where it's
+          filled.
+        -->
+        <form
+          class="contact-form"
+          id="contactForm"
+          name="contact"
+          method="POST"
+          data-netlify="true"
+          netlify-honeypot="bot-field"
+        >
+          <input type="hidden" name="form-name" value="contact" />
+          <p class="hp-field">
+            <label>Leave this field blank: <input name="bot-field" /></label>
+          </p>
+
+          <input
+            type="text"
+            name="name"
+            placeholder="Your name*"
+            required
+          />
+          <input
+            type="email"
+            name="email"
+            placeholder="Your email address*"
+            required
+          />
+          <input type="tel" name="phone" placeholder="Your phone number" />
+          <textarea
+            name="message"
+            placeholder="How can I help you today?"
+          ></textarea>
+
+          <button type="submit" class="contact-submit">Get in Touch</button>
+        </form>
+      </div>
+    </section>
 
     <div class="footer">
       <p>
         &copy; 2024 At Home With Dallas. All rights reserved. | <a href="mailto:">Email</a> | <a href="tel:">Call</a>
       </p>
+    </div>
+
+    <div class="toast" id="contactToast" role="status" aria-live="polite">
+      <p class="toast-title" id="toastTitle">Message sent</p>
+      <p class="toast-body" id="toastBody">Thanks for reaching out — Dallas will respond as soon as possible.</p>
     </div>
   </body>
 </html>
