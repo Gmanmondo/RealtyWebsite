@@ -3,11 +3,6 @@
   publish = "."
 
 [[redirects]]
-  from = "/"
-  to = "/home.html"
-  status = 200
-
-[[redirects]]
   from = "/api/listings"
   to = "/.netlify/functions/listings"
   status = 200
