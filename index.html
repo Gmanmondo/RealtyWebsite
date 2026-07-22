@@ -11,6 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="home.css" />
+    <script src="main.js" defer></script>
   </head>
   <body>
     <header>
@@ -120,19 +121,109 @@
           alt="Dallas, a real estate agent, smiling in front of the camera in a staged home"
         />
       </div>
-      <div class="tall-frame" id="tallFrame">
-        <div class="reveal-mask-h"></div>
-        <img
-          src="/Images/DallasTyping.jpg"
-          alt="Dallas, a real estate agent, smiling in front of the camera in a staged home"
-        />
-      </div>
       <p>
         Dallas is a licensed real estate agent with a passion for helping people
         find their dream homes. With years of experience in the industry, he
         brings a wealth of knowledge and expertise to every transaction.
       </p>
     </div>
+
+    <!--
+      SHOWCASE FRAMEWORK — a reusable checkerboard layout: alternating
+      image/text rows, centred in the page, with the option to break
+      up rows with a full-width photo. Styled to match the light
+      background it shares with the Socials section below it.
+
+      To add a row: copy one ".showcase-row" block. It always contains
+      a ".showcase-media" and a ".showcase-copy" in that order in the
+      HTML — add the class "reverse" to a row to flip which side the
+      image lands on visually, which is what creates the checkerboard
+      pattern. No "reverse" = image left, text right. "reverse" =
+      text left, image right.
+
+      To add a photo break: copy one ".showcase-full" block and drop
+      it between rows — it sits at the same centred width as the rows
+      above and below it.
+
+      Everything inside is a placeholder — swap the image src/alt and
+      the heading/paragraph/button text for your own.
+    -->
+    <section class="showcase">
+      <div class="showcase-inner">
+        <div class="showcase-row">
+          <div class="showcase-media">
+            <img src="/Images/REPLACE-ME-1.jpg" alt="Replace with a description of this photo" />
+          </div>
+          <div class="showcase-copy">
+            <h2>Heading goes here</h2>
+            <p>
+              Replace this paragraph with your own copy. A sentence or
+              two works well here, enough to say something real without
+              crowding the photo beside it.
+            </p>
+            <a class="btn" href="#">Button label</a>
+          </div>
+        </div>
+
+        <div class="showcase-full">
+          <img src="/Images/REPLACE-ME-2.jpg" alt="Replace with a description of this photo" />
+        </div>
+
+        <div class="showcase-row reverse">
+          <div class="showcase-media">
+            <img src="/Images/REPLACE-ME-3.jpg" alt="Replace with a description of this photo" />
+          </div>
+          <div class="showcase-copy">
+            <h2>Heading goes here</h2>
+            <p>
+              Replace this paragraph with your own copy. Add a second
+              button if you need one, like below.
+            </p>
+            <div class="showcase-buttons">
+              <a class="btn" href="#">Button label</a>
+              <a class="btn" href="#">Second button</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="socials">
+      <h2>My Socials.</h2>
+
+      <div class="socials-grid">
+        <div class="tape-column" id="youtubeTape" data-direction="right">
+          <div class="tape-track" id="youtubeTrack">
+            <p class="tape-placeholder">Loading videos…</p>
+          </div>
+        </div>
+
+        <div class="socials-links">
+          <a class="social-btn" href="https://www.instagram.com/athomewithdallas/" target="_blank" rel="noopener" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="2" width="20" height="20" rx="5"/>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+              <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/>
+            </svg>
+            <span>Instagram</span>
+          </a>
+          <a class="social-btn" href="https://www.youtube.com/@athomewithdallas" target="_blank" rel="noopener" aria-label="YouTube">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="5" width="20" height="14" rx="4"/>
+              <path d="M10 9l6 3-6 3z" fill="currentColor" stroke="none"/>
+            </svg>
+            <span>YouTube</span>
+          </a>
+          <a class="social-btn" href="https://www.tiktok.com/@dallasjamesrealty?_r=1&_t=ZS-98EG5Z8KaJg" target="_blank" rel="noopener" aria-label="TikTok">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5c.5 0 1 .1 1.5.3"/>
+              <path d="M14 3c.5 2.2 2.2 3.8 4.4 4.1"/>
+            </svg>
+            <span>TikTok</span>
+          </a>
+        </div>
+      </div>
+    </section>
 
     <section class="listings">
       <div class="listings-head">
@@ -163,470 +254,17 @@
       </div>
     </section>
 
-    <section class="socials">
-      <h2>My Socials.</h2>
-
-      <div class="socials-grid">
-        <div class="tape-column" id="youtubeTape" data-direction="right">
-          <div class="tape-track" id="youtubeTrack">
-            <p class="tape-placeholder">Loading videos…</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <script>
-      const fp = document.getElementById("featurePhoto");
-      const io = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              fp.classList.add("in-view");
-              io.disconnect();
-            }
-          });
-        },
-        { threshold: 0.2 },
-      );
-      io.observe(fp);
-
-      const portraitFrame = document.getElementById("portraitFrame");
-      const tallFrame = document.getElementById("tallFrame");
-      const aboutSection = document.querySelector(".aboutMe");
-      const aboutObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((e) => {
-            if (e.isIntersecting) {
-              portraitFrame.classList.add("revealed");
-              tallFrame.classList.add("revealed");
-              aboutObserver.disconnect();
-            }
-          });
-        },
-        { threshold: 0.2 },
-      );
-      aboutObserver.observe(aboutSection);
-
-      /* =========================================================
-     FEATURED LISTINGS — powered by Airtable via a secure proxy
-     -----------------------------------------------------
-     The browser never talks to Airtable directly and never sees
-     your Airtable token. Instead it calls /api/listings, which
-     netlify.toml redirects to a small serverless function (see
-     /netlify/functions/listings.js) that runs on Netlify's
-     servers. The token lives there as an environment variable —
-     set it in your Netlify project:
-
-       Netlify dashboard → your site → Site configuration →
-       Environment variables → add:
-         AIRTABLE_BASE_ID   = appXXXXXXXXXXXXXX
-         AIRTABLE_TABLE     = Listings
-         AIRTABLE_TOKEN     = patXXXXXXXXXXXXXX...
-
-     Redeploy after adding them. Your Airtable table should have
-     these columns: Price, Address, Beds, Baths, SqFt, Status,
-     MLSNumber, Photo (attachment), Order (number, for sorting).
-     ========================================================= */
-
-      const track = document.getElementById("listingsTrack");
-      const status = document.getElementById("listingsStatus");
-
-      async function loadListings() {
-        try {
-          const res = await fetch("/api/listings");
-          if (!res.ok) throw new Error(`Server responded ${res.status}`);
-          const data = await res.json();
-          renderListings(data.listings || []);
-        } catch (err) {
-          console.error("Could not load listings:", err);
-          status.textContent =
-            "Listings couldn't be loaded right now — please check back shortly.";
-        }
-      }
-
-      function renderListings(listings) {
-        if (listings.length === 0) {
-          status.textContent =
-            "No active listings at the moment — check back soon.";
-          return;
-        }
-
-        track.innerHTML = "";
-
-        listings.forEach((listing) => {
-          const price =
-            typeof listing.price === "number"
-              ? listing.price.toLocaleString("en-US", {
-                  style: "currency",
-                  currency: "CAD",
-                  maximumFractionDigits: 0,
-                })
-              : listing.price || "";
-
-          const card = document.createElement("article");
-          card.className = "listing-card";
-          card.innerHTML = `
-        <div class="reveal-mask"></div>
-        <div class="listing-photo">
-          <span class="status-tag">${listing.status}</span>
-          <img src="${listing.photoUrl}" alt="${listing.address || "Listing photo"}">
-        </div>
-        <div class="listing-info">
-          <p class="listing-price">${price}</p>
-          <p class="listing-address">${listing.address}</p>
-          <p class="listing-meta">${listing.beds ?? "–"} beds · ${listing.baths ?? "–"} baths · ${listing.sqft} sqft</p>
-          <p class="listing-id">#${listing.mlsNumber}</p>
-        </div>
-      `;
-          track.appendChild(card);
-        });
-
-        setupScrollArrows();
-        setupRevealAnimation();
-      }
-
-      function setupScrollArrows() {
-        const step = () =>
-          track.querySelector(".listing-card").offsetWidth + 24;
-        document.getElementById("scrollLeft").addEventListener("click", () => {
-          track.scrollBy({ left: -step(), behavior: "smooth" });
-        });
-        document.getElementById("scrollRight").addEventListener("click", () => {
-          track.scrollBy({ left: step(), behavior: "smooth" });
-        });
-      }
-
-      function setupRevealAnimation() {
-        const cards = document.querySelectorAll(".listing-card");
-        cards.forEach((card, i) => {
-          card.querySelector(".reveal-mask").style.transitionDelay =
-            `${i * 0.12}s`;
-        });
-
-        // Watch the section as a whole — fires once, the moment the row first
-        // scrolls into view. All cards reveal together on that single trigger,
-        // so scrolling the row horizontally afterward never re-triggers anything.
-        const section = document.querySelector(".listings");
-        const sectionObserver = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                cards.forEach((card) => card.classList.add("revealed"));
-                sectionObserver.unobserve(entry.target);
-              }
-            });
-          },
-          { threshold: 0.15 },
-        );
-
-        sectionObserver.observe(section);
-      }
-
-      loadListings();
-
-      /* =========================================================
-         SOCIALS TAPE ENGINE
-         -----------------------------------------------------
-         Drives the continuous scroll for the YouTube .tape-column
-         via real scrollLeft (not a CSS animation), and hands
-         control over to native wheel/touch/momentum scrolling on
-         that exact same property with no fighting between the two.
-
-         Speed eases toward a target every frame rather than
-         snapping — that single mechanism gives both the slow-stop
-         on hover and the slow-start on resume for free.
-
-         A single native 'scroll' listener is the one source of
-         truth for "did the user scroll this" — it fires the same
-         way for wheel, trackpad momentum, touch drag, and
-         scrollbar dragging, so there's no separate wheel/touch
-         logic that can fight the animation loop or each other.
-
-         data-direction="right" means the cards visually drift from
-         left to right — which means scrollLeft decreases each frame
-         (moving the viewport backward reveals content sliding right).
-         data-direction="left" would do the reverse, a standard
-         ticker-style right-to-left drift, for future use.
-
-         Content inside .tape-track should be tripled (three
-         identical sets of cards) so there's a buffer to scroll into
-         before the loop has to silently wrap.
-
-         initTapeColumn expects the tripled cards to already be in
-         the DOM when it's called — for YouTube that means waiting
-         on the API response first (see loadYouTubeTape below).
-         ========================================================= */
-      function initTapeColumn(column){
-        const track = column.querySelector('.tape-track');
-        if(!track) return;
-
-        // 'right' = cards drift left→right on screen = scrollLeft decreases
-        const directionSign = column.dataset.direction === 'left' ? 1 : -1;
-        const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-        const MAX_SPEED = prefersReducedMotion ? 0 : 0.5;  // px per frame, full auto-scroll pace
-        const RESUME_DELAY = 1500;    // ms after leaving before auto-scroll starts easing back in
-        const EASE = 0.05;            // how quickly speed eases toward its target each frame
-
-        const setCount = 3;
-        const setWidth = track.scrollWidth / setCount;
-        let scrollPos = setWidth;     // our own float tracker — never rounded, unlike DOM scrollLeft
-        column.scrollLeft = scrollPos; // start centred in the middle copy
-
-        let targetSpeed = MAX_SPEED;
-        let currentSpeed = MAX_SPEED;
-        let resumeTimer = null;
-
-        // True only for the instant we ourselves write column.scrollLeft, so the
-        // 'scroll' handler below can tell "we did that" apart from "the user did that".
-        let isAutoScroll = false;
-
-        function writeScrollLeft(){
-          isAutoScroll = true;
-          column.scrollLeft = scrollPos;
-        }
-
-        function wrap(){
-          if(scrollPos < setWidth * 0.5){
-            scrollPos += setWidth;
-            writeScrollLeft();
-          }else if(scrollPos > setWidth * 1.5){
-            scrollPos -= setWidth;
-            writeScrollLeft();
-          }
-        }
-
-        function pause(){
-          targetSpeed = 0;
-          currentSpeed = 0; // stop instantly so it can't fight the user's own scrolling
-          if(resumeTimer){ clearTimeout(resumeTimer); resumeTimer = null; }
-        }
-
-        function scheduleResume(){
-          if(resumeTimer) clearTimeout(resumeTimer);
-          resumeTimer = setTimeout(()=>{
-            targetSpeed = MAX_SPEED;
-            resumeTimer = null;
-          }, RESUME_DELAY);
-        }
-
-        function tick(){
-          currentSpeed += (targetSpeed - currentSpeed) * EASE;
-          if(Math.abs(currentSpeed) > 0.002){
-            scrollPos += directionSign * currentSpeed;
-            wrap();
-            writeScrollLeft();
-          }
-          requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
-
-        // ---- Single source of truth for ALL user-driven scrolling: wheel,
-        // trackpad momentum, touch drag, and scrollbar drag all fire this the
-        // same way, so there's no separate touch/wheel logic to fight itself ----
-        column.addEventListener('scroll', ()=>{
-          if(isAutoScroll){
-            isAutoScroll = false; // this write was ours, ignore it
-            return;
-          }
-          // A real, user-driven scroll happened: stop the animation immediately
-          // and resync our tracker to wherever the user actually left it.
-          pause();
-          scrollPos = column.scrollLeft;
-          wrap();
-          scheduleResume();
-        }, {passive:true});
-
-        // ---- Desktop: hover eases to a stop, native wheel/trackpad
-        // scroll just works because the column is a real scrollable element ----
-        column.addEventListener('mouseenter', pause);
-        column.addEventListener('mouseleave', scheduleResume);
-
-        track.addEventListener('click', (e)=>{
-          const card = e.target.closest('.tape-card');
-          if(card && card.dataset.url){
-            window.open(card.dataset.url, '_blank', 'noopener');
-          }
-        });
-      }
-
-      /* =========================================================
-         YOUTUBE FEED — powered by the YouTube Data API v3 via a
-         secure proxy (same pattern as the Airtable listings above:
-         the browser calls /api/youtube, which netlify.toml redirects
-         to /netlify/functions/youtube.js. The API key lives there as
-         an environment variable and never reaches the browser.
-
-           Netlify dashboard → your site → Site configuration →
-           Environment variables → add:
-             YOUTUBE_API_KEY     = AIzaSy...
-             YOUTUBE_PLAYLIST_ID = UUxxxxxxxxxxxxxxxxxxxxxx
-
-         (Your uploads playlist ID is your channel ID with the
-         leading "UC" swapped for "UU".) Redeploy after adding them.
-         ========================================================= */
-
-      async function loadYouTubeTape() {
-        const youtubeColumn = document.getElementById("youtubeTape");
-        const youtubeTrackEl = document.getElementById("youtubeTrack");
-        if (!youtubeColumn || !youtubeTrackEl) return;
-
-        try {
-          const res = await fetch("/api/youtube");
-          if (!res.ok) throw new Error(`Server responded ${res.status}`);
-          const data = await res.json();
-          const videos = data.videos || [];
-
-          if (videos.length === 0) {
-            youtubeTrackEl.innerHTML =
-              '<p class="tape-placeholder">No videos found right now.</p>';
-            return;
-          }
-
-          renderYouTubeCards(youtubeColumn, youtubeTrackEl, videos);
-        } catch (err) {
-          console.error("Could not load YouTube videos:", err);
-          youtubeTrackEl.innerHTML =
-            '<p class="tape-placeholder">Videos couldn\'t be loaded right now.</p>';
-        }
-      }
-
-      function formatPublishedDate(iso) {
-        const date = new Date(iso);
-        return date.toLocaleDateString("en-US", {
-          month: "short",
-          day: "numeric",
-          year: "numeric",
-        });
-      }
-
-      function buildYouTubeCardHTML(video) {
-        return `
-      <button type="button" class="tape-card" data-url="${video.url}">
-        <div class="tape-thumb" style="background-image:url('${video.thumbnailUrl}');background-size:cover;background-position:center;"></div>
-        <div class="tape-info">
-          <p class="tape-title">${video.title}</p>
-          <p class="tape-date">${formatPublishedDate(video.publishedAt)}</p>
-        </div>
-      </button>
-    `;
-      }
-
-      function renderYouTubeCards(column, trackEl, videos) {
-        const oneSetHTML = videos.map(buildYouTubeCardHTML).join("");
-
-        // Tripled so initTapeColumn has its scroll-wrap buffer, same as
-        // the static markup used to provide by hand.
-        trackEl.innerHTML = oneSetHTML + oneSetHTML + oneSetHTML;
-
-        const cards = trackEl.querySelectorAll(".tape-card");
-        cards.forEach((card, i) => {
-          if (i >= videos.length) {
-            card.setAttribute("tabindex", "-1");
-            card.setAttribute("aria-hidden", "true");
-          }
-        });
-
-        initTapeColumn(column);
-      }
-
-      loadYouTubeTape();
-
-      /* =========================================================
-         CONTACT FORM — still a real Netlify Forms submission (the
-         data-netlify="true" attribute on the <form> is what tells
-         Netlify to detect and store it at deploy time), but sent via
-         fetch() instead of a native page POST so the browser never
-         navigates away. On success we show an animated toast bubble
-         and reset the form; on failure we show an error-state toast
-         instead — the page never navigates either way, and the
-         person's typed message isn't cleared if something goes wrong.
-
-         NOTE: Netlify Forms only work once the site is actually
-         deployed — Netlify detects forms by scanning the built HTML
-         at deploy time and processes submissions through its
-         production edge network. Running this locally via
-         `netlify dev` will always fail here (that's expected), since
-         dev doesn't replicate that pipeline. To test for real, either
-         deploy the site (`netlify deploy --prod`) or push a preview
-         deploy (`netlify deploy`, no --prod flag) and test on that URL.
-         ========================================================= */
-      const contactForm = document.getElementById("contactForm");
-      const contactToast = document.getElementById("contactToast");
-      const toastTitleEl = document.getElementById("toastTitle");
-      const toastBodyEl = document.getElementById("toastBody");
-      let toastHideTimer = null;
-
-      function showToast(state){
-        if(toastHideTimer) clearTimeout(toastHideTimer);
-
-        contactToast.classList.remove("toast-success", "toast-error");
-
-        if(state === "error"){
-          contactToast.classList.add("toast-error");
-          toastTitleEl.textContent = "Something went wrong";
-          toastBodyEl.textContent =
-            "Your message couldn't be sent — please try again, or email Dallas directly.";
-        } else {
-          contactToast.classList.add("toast-success");
-          toastTitleEl.textContent = "Message sent";
-          toastBodyEl.textContent =
-            "Thanks for reaching out — Dallas will respond as soon as possible.";
-        }
-
-        contactToast.classList.add("show");
-        toastHideTimer = setTimeout(()=>{
-          contactToast.classList.remove("show");
-          toastHideTimer = null;
-        }, 4500);
-      }
-
-      // Netlify Forms expects a standard urlencoded body, same shape
-      // a native form POST would send.
-      function encodeFormData(form){
-        return new URLSearchParams(new FormData(form)).toString();
-      }
-
-      async function handleContactSubmit(e){
-        e.preventDefault();
-
-        const submitBtn = contactForm.querySelector(".contact-submit");
-        const originalLabel = submitBtn ? submitBtn.textContent : "";
-        if(submitBtn){
-          submitBtn.disabled = true;
-          submitBtn.textContent = "Sending…";
-        }
-
-        try {
-          const res = await fetch("/", {
-            method: "POST",
-            headers: { "Content-Type": "application/x-www-form-urlencoded" },
-            body: encodeFormData(contactForm),
-          });
-
-          if(!res.ok) throw new Error(`Server responded ${res.status}`);
-
-          contactForm.reset();
-          showToast("success");
-        } catch (err) {
-          console.error("Contact form submission failed:", err);
-          showToast("error");
-        } finally {
-          if(submitBtn){
-            submitBtn.disabled = false;
-            submitBtn.textContent = originalLabel;
-          }
-        }
-      }
-
-      if(contactForm){
-        contactForm.addEventListener("submit", handleContactSubmit);
-      }
-    </script>
-
     <section class="contact" id="contact">
+      <h2 class="contact-heading anim-typewriter">Let Me Know What's Going On!</h2>
       <div class="contact-grid">
         <div class="contact-intro">
-          <h2>Let's Talk Real Estate</h2>
+          <span class="tall-frame" id="tallFrame">
+              <span class="reveal-mask-h"></span>
+              <img
+                src="/Images/DallasTyping.jpg"
+                alt="Dallas, a real estate agent, smiling in front of the camera in a staged home"
+              />
+            </span>
           <p>
             Whether you're buying, selling, or just curious about the
             market, Dallas is here to help you take the next step with
@@ -634,19 +272,6 @@
           </p>
         </div>
 
-        <!--
-          NETLIFY FORMS — no serverless function needed here.
-          Netlify scans the built HTML at deploy time for any <form>
-          with data-netlify="true" and wires it up automatically. Every
-          submission shows up under Site configuration → Forms in your
-          Netlify dashboard, and you can turn on email notifications
-          there too (Forms → Settings and usage → Form notifications).
-
-          netlify-honeypot="bot-field" adds simple spam protection: a
-          field hidden from real visitors via CSS that only bots tend
-          to fill in. Netlify silently discards submissions where it's
-          filled.
-        -->
         <form
           class="contact-form"
           id="contactForm"
@@ -687,11 +312,6 @@
       <p>
         &copy; 2024 At Home With Dallas. All rights reserved. | <a href="mailto:">Email</a> | <a href="tel:">Call</a>
       </p>
-    </div>
-
-    <div class="toast" id="contactToast" role="status" aria-live="polite">
-      <p class="toast-title" id="toastTitle">Message sent</p>
-      <p class="toast-body" id="toastBody">Thanks for reaching out — Dallas will respond as soon as possible.</p>
     </div>
   </body>
 </html>

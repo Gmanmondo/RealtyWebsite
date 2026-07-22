@@ -41,7 +41,12 @@ exports.handler = async function () {
         sqft: f.SqFt ?? '',
         status: f.Status ?? 'Active',
         mlsNumber: f.MLSNumber ?? '',
-        photoUrl: f.Photo && f.Photo[0] ? f.Photo[0].url : ''
+        photoUrl: f.Photo && f.Photo[0] ? f.Photo[0].url : '',
+        // Realtor.ca listing page URL — add a "RealtorURL" column in
+        // Airtable with the full https://www.realtor.ca/... link for
+        // each listing. Cards without this filled in just render as
+        // non-clickable, same as before.
+        realtorUrl: f.RealtorURL ?? ''
       };
     });
 
