@@ -1,0 +1,164 @@
+:root{
+  --bg:#16140f;
+  --bg-soft:#1d1a13;
+  --cream:#f4efe4;
+  --stone:#a9a08c;
+  --brass:#c8a35f;
+  --brass-dim:#8c7649;
+  --line:rgba(244,239,228,0.14);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+html{scroll-behavior:smooth;}
+
+body{
+  background:var(--bg);
+  color:var(--cream);
+  font-family:'Jost',sans-serif;
+  font-weight:300;
+  overflow-x:hidden;
+}
+
+a{color:inherit;text-decoration:none;}
+
+/* ---------- FOOTER ---------- */
+.site-footer{
+  background:#ded9cd;
+  color:#241f16;
+}
+
+.footer-inner{
+  display:grid;
+  grid-template-columns:auto 1fr 1fr;
+  gap:56px;
+  max-width:1200px;
+  margin:0 auto;
+  padding:64px 48px 32px;
+  align-items:start;
+}
+
+.footer-logo{
+  width:130px;
+  height:auto;
+  display:block;
+}
+
+.footer-name{
+  font-family:'Jost',sans-serif;
+  font-weight:600;
+  font-size:1.05rem;
+  margin-bottom:4px;
+}
+
+.footer-role{
+  font-size:0.85rem;
+  color:#6b6250;
+  margin-bottom:18px;
+}
+
+.footer-line{
+  font-size:0.9rem;
+  margin-bottom:6px;
+}
+
+.footer-line a{
+  font-weight:600;
+  text-decoration:underline;
+}
+
+.footer-socials{
+  display:flex;
+  gap:14px;
+  margin-top:14px;
+}
+
+.footer-socials a{
+  opacity:0.85;
+  transition:opacity .2s ease;
+}
+
+.footer-socials a:hover{
+  opacity:1;
+}
+
+.footer-brokerage-name{
+  font-family:'Jost',sans-serif;
+  font-weight:600;
+  font-size:0.85rem;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.footer-address{
+  font-size:0.9rem;
+  line-height:1.7;
+  color:#4a4234;
+}
+
+.footer-legal{
+  max-width:1200px;
+  margin:0 auto;
+  padding:20px 48px 32px;
+  border-top:1px solid rgba(36,31,22,0.15);
+}
+
+.footer-legal p{
+  font-size:0.78rem;
+  color:#6b6250;
+}
+
+.footer-legal a{
+  margin-left:10px;
+  padding-left:10px;
+  border-left:1px solid rgba(36,31,22,0.25);
+  text-decoration:underline;
+  color:#6b6250;
+}
+
+.brokerage-logo{
+  width:120px;
+  height:120px;
+  margin-top:16px;
+  object-fit:cover;
+  border-radius:50%;
+  border:3px solid #333333;
+}
+
+@media (max-width: 900px){
+  .footer-inner{
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "brand agent"
+      "brand brokerage";
+    gap:32px;
+  }
+  .footer-brand{ grid-area:brand; }
+  .footer-agent{ grid-area:agent; }
+  .footer-brokerage{ grid-area:brokerage; }
+}
+
+@media (max-width: 600px){
+  .footer-inner{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "brand"
+      "agent"
+      "brokerage";
+    padding:48px 24px 24px;
+  }
+  .footer-legal{
+    padding:16px 24px 24px;
+  }
+  .footer-legal p{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .footer-legal a{
+    margin-left:0;
+    padding-left:0;
+    border-left:none;
+  }
+}

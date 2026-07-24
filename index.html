@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>At Home With Dallas</title>
+    <link rel="icon" type="image/x-icon" href="/Images/TabLogo2.ico">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -16,30 +17,19 @@
   <body>
     <header>
       <div class="logo">
-        <svg
-          class="logo-mark"
-          viewBox="0 0 40 40"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          aria-hidden="true"
-        >
-          <path
-            d="M20 4 L36 18 V36 H24 V24 H16 V36 H4 V18 Z"
-            stroke="#f4efe4"
-            stroke-width="1.4"
-            fill="none"
-            stroke-linejoin="round"
-          />
-        </svg>
+        <button class="imageRefresh" onclick="history.scrollRestoration='manual'; location.reload();">
+          <img
+          src="/Images/DallasTransparentLogo1.png"
+          alt="Dallas James Logo"
+          height="50"
+          width="200"
+        />
+        </button>
         <div class="logo-text">
           <span class="top">At Home With Dallas</span>
           <span class="bottom">REAL ESTATE</span>
         </div>
       </div>
-
-      <nav class="nav-center">
-        <a href="#worth">What's Your Home Worth?</a>
-      </nav>
 
       <div class="nav-right">
         <a class="icon-btn" href="tel:" aria-label="Call">
@@ -97,7 +87,7 @@
           principle: clear communication, honest advice, and a plan built around
           your goals.
         </p>
-        <a class="btn" href="#approach">Meet Dallas</a>
+        <a class="btn" href="/contact.html">Meet Dallas</a>
       </div>
     </section>
 
@@ -152,29 +142,29 @@
       <div class="showcase-inner">
         <div class="showcase-row">
           <div class="showcase-media">
-            <img src="/Images/REPLACE-ME-1.jpg" alt="Replace with a description of this photo" />
+            <img src="/Images/DallasPeace.jpg" alt="Dallas sitting waving to the camera in a staged home." />
           </div>
           <div class="showcase-copy">
-            <h2>Heading goes here</h2>
+            <h2>Where Passion Meets Precision</h2>
             <p>
-              Replace this paragraph with your own copy. A sentence or
-              two works well here, enough to say something real without
-              crowding the photo beside it.
+              With a background in construction, Dallas brings a unique perspective to real estate.
+              She understands the intricacies of home building and renovation, 
+              ensuring that every property she represents meets the highest standards of quality and craftsmanship.
             </p>
-            <a class="btn" href="#">Button label</a>
+            <a class="btn" href="#">Read More</a>
           </div>
         </div>
 
         <div class="showcase-full">
-          <img src="/Images/REPLACE-ME-2.jpg" alt="Replace with a description of this photo" />
+          <img src="/Images/SourDough.jpg" alt="Dallas' Sour Dough Loafs." />
         </div>
 
         <div class="showcase-row reverse">
           <div class="showcase-media">
-            <img src="/Images/REPLACE-ME-3.jpg" alt="Replace with a description of this photo" />
+            <img src="/Images/ConstructionDallas.jpg" alt="Dallas working on a construction site" />
           </div>
           <div class="showcase-copy">
-            <h2>Heading goes here</h2>
+            <h2>It's The Small Things</h2>
             <p>
               Replace this paragraph with your own copy. Add a second
               button if you need one, like below.
@@ -225,6 +215,49 @@
       </div>
     </section>
 
+    <!--
+      TESTIMONIALS — powered by Google Places via a secure proxy (same
+      pattern as the Airtable listings and YouTube tape elsewhere in
+      this file). The browser calls /api/testimonials, which
+      netlify.toml redirects to /netlify/functions/testimonials.js,
+      which calls Google on the server so your API key never reaches
+      the browser. See that function for the two environment
+      variables it needs (GOOGLE_PLACES_API_KEY, GOOGLE_PLACE_ID).
+
+      Heads up: Google only ever returns up to 5 reviews per place
+      through this API, no matter how many the business actually has
+      — that's a fixed limit on Google's side, not something
+      configurable here.
+    -->
+    <section class="testimonials">
+      <div class="testimonials-head">
+        <div>
+          <span class="eyebrow">WHAT CLIENTS SAY</span>
+          <h2>Testimonials</h2>
+        </div>
+        <div class="testimonials-arrows">
+          <button
+            class="arrow-btn"
+            id="testimonialsScrollLeft"
+            aria-label="Scroll testimonials left"
+          >
+            ←
+          </button>
+          <button
+            class="arrow-btn"
+            id="testimonialsScrollRight"
+            aria-label="Scroll testimonials right"
+          >
+            →
+          </button>
+        </div>
+      </div>
+
+      <div class="testimonials-track" id="testimonialsTrack">
+        <p class="testimonials-status" id="testimonialsStatus">Loading testimonials…</p>
+      </div>
+    </section>
+
     <section class="listings">
       <div class="listings-head">
         <div>
@@ -255,16 +288,16 @@
     </section>
 
     <section class="contact" id="contact">
-      <h2 class="contact-heading anim-typewriter">Let Me Know What's Going On!</h2>
+      <h2 class="contact-heading" id="contactHeadingTypewriter">Let Me Know What's Going On!</h2>
       <div class="contact-grid">
         <div class="contact-intro">
           <span class="tall-frame" id="tallFrame">
-              <span class="reveal-mask-h"></span>
-              <img
-                src="/Images/DallasTyping.jpg"
-                alt="Dallas, a real estate agent, smiling in front of the camera in a staged home"
-              />
-            </span>
+            <span class="reveal-mask-h"></span>
+            <img
+              src="/Images/DallasTyping.jpg"
+              alt="Dallas, a real estate agent, connecting with people over email."
+            />
+          </span>
           <p>
             Whether you're buying, selling, or just curious about the
             market, Dallas is here to help you take the next step with
@@ -308,10 +341,66 @@
       </div>
     </section>
 
-    <div class="footer">
-      <p>
-        &copy; 2024 At Home With Dallas. All rights reserved. | <a href="mailto:">Email</a> | <a href="tel:">Call</a>
-      </p>
-    </div>
+    <!--
+      FOOTER FRAMEWORK — three columns (logo, agent details, brokerage
+      details) sitting above a slim legal bar. Swap the placeholder
+      logo image, name, role, phone/email, and address text below for
+      your own — the social links already point at Dallas's real
+      Instagram/YouTube/TikTok (same ones used in "My Socials" up the
+      page), so those don't need touching unless the URLs change.
+    -->
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <img src="/Images/REPLACE-ME-logo.jpg" alt="Replace with your logo" class="footer-logo" />
+        </div>
+
+        <div class="footer-agent">
+          <p class="footer-name">Replace with agent name</p>
+          <p class="footer-role">Replace with title / designation</p>
+
+          <p class="footer-line"><a href="tel:">Replace with phone number</a></p>
+          <p class="footer-line"><a href="mailto:">Replace with email address</a></p>
+
+          <div class="footer-socials">
+            <a href="https://www.instagram.com/athomewithdallas/" target="_blank" rel="noopener" aria-label="Instagram">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="2" width="20" height="20" rx="5"/>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                <line x1="17.5" y1="6.5" x2="17.5" y2="6.5"/>
+              </svg>
+            </a>
+            <a href="https://www.youtube.com/@athomewithdallas" target="_blank" rel="noopener" aria-label="YouTube">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <rect x="2" y="5" width="20" height="14" rx="4"/>
+                <path d="M10 9l6 3-6 3z" fill="currentColor" stroke="none"/>
+              </svg>
+            </a>
+            <a href="https://www.tiktok.com/@dallasjamesrealty?_r=1&_t=ZS-98EG5Z8KaJg" target="_blank" rel="noopener" aria-label="TikTok">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 3v11.5a3.5 3.5 0 1 1-3.5-3.5c.5 0 1 .1 1.5.3"/>
+                <path d="M14 3c.5 2.2 2.2 3.8 4.4 4.1"/>
+              </svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-brokerage">
+          <p class="footer-brokerage-name">Replace with brokerage name</p>
+          <p class="footer-address">
+            Replace with address line 1<br />
+            Replace with address line 2
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-legal">
+        <p>
+          &copy; 2026 At Home With Dallas.
+          <a href="#">Privacy Policy</a>
+          <a href="#">Contact Dallas</a>
+        </p>
+      </div>
+    </footer>
   </body>
 </html>

@@ -41,16 +41,17 @@ header{
   gap:12px;
 }
 
-.logo-mark{
-  width:34px;
-  height:34px;
-  flex-shrink:0;
+.imageRefresh{
+  background:none;
+  border:none;
+  cursor:pointer;
 }
 
 .logo-text{
   display:flex;
   flex-direction:column;
   line-height:1;
+  padding-left:8px;
 }
 
 .logo-text .top{
@@ -65,20 +66,6 @@ header{
   letter-spacing:0.32em;
   color:var(--stone);
   margin-top:5px;
-}
-
-.nav-center a{
-  font-size:0.85rem;
-  letter-spacing:0.03em;
-  font-weight:500;
-  border-bottom:1px solid var(--brass);
-  padding-bottom:4px;
-  color:var(--cream);
-  transition:color .25s ease, border-color .25s ease;
-}
-
-.nav-center a:hover{
-  color:var(--brass);
 }
 
 .nav-right{
@@ -353,16 +340,16 @@ header{
 .reveal-mask-h{
   position:absolute;
   inset:0;
-  background:var(--bg);
+  background:var(--cream);
   z-index:5;
   display:block;
-  transform:translateX(0);
+  transform:translateY(0);
   transition:transform 1s cubic-bezier(.65,0,.35,1);
   pointer-events:none;
 }
 
 .tall-frame.revealed .reveal-mask-h{
-  transform:translateX(-101%);
+  transform:translateY(-101%);
 }
 
 .aboutMe p{
@@ -548,6 +535,79 @@ header{
   .listing-card{width:240px;}
 }
 
+/* ---------- TESTIMONIALS ---------- */
+.testimonials{
+  padding:100px 48px 120px;
+}
+
+.testimonials-head{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  margin-bottom:40px;
+}
+
+.testimonials-arrows{
+  display:flex;
+  gap:12px;
+}
+
+.testimonials-track{
+  display:flex;
+  gap:24px;
+  overflow-x:auto;
+  scroll-snap-type:x proximity;
+  scrollbar-width:none;
+  padding-bottom:8px;
+}
+
+.testimonials-track::-webkit-scrollbar{
+  display:none;
+}
+
+.testimonials-status{
+  color:var(--stone);
+  font-size:0.9rem;
+  padding:12px 0;
+}
+
+.testimonial-card{
+  flex:0 0 auto;
+  width:340px;
+  scroll-snap-align:start;
+  background:var(--cream);
+  color:#241f16;
+  padding:32px 28px;
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+}
+
+.testimonial-stars{
+  color:var(--brass);
+  font-size:1.1rem;
+  letter-spacing:0.15em;
+}
+
+.testimonial-text{
+  font-size:0.95rem;
+  line-height:1.7;
+  color:#4a4234;
+  flex:1;
+}
+
+.testimonial-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.1rem;
+  font-weight:600;
+  color:#241f16;
+}
+
+@media (max-width: 600px){
+  .testimonials{padding:72px 24px 96px;}
+  .testimonial-card{width:260px;}
+}
+
 /* ---------- RESPONSIVE ---------- */
 @media (max-width: 980px){
   .hero{
@@ -556,7 +616,6 @@ header{
     text-align:left;
   }
   header{padding:22px 24px;}
-  .nav-center{display:none;}
   .hero-thumb{max-width:220px;}
   .scroll-cue{display:none;}
 }
@@ -573,7 +632,6 @@ header{
   margin:0 auto;
   display:flex;
   flex-direction:column;
-  gap:100px;
 }
 
 .showcase-row{
@@ -646,15 +704,15 @@ header{
    centred .showcase-inner wrapper alongside them). */
 .showcase-full{
   width:100%;
-  aspect-ratio:16/9;
-  overflow:hidden;
+  display:flex;
+  justify-content:center;
 }
 
 .showcase-full img{
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  display:block;
+  width:50%;
+  height:50%;
+  object-fit:fill;
+  rotate:90deg;
 }
 
 @media (max-width: 900px){
@@ -870,7 +928,7 @@ header{
 .contact-heading{
   position: relative;
   top: 50%;  
-  width: 24em;
+  width: 0; /* hidden until scrolled into view — .anim-typewriter (added by main.js) takes it to 13em */
   margin: 0 auto;
   border-right: 2px solid rgba(255,255,255,.75);
   font-size: 300%;
@@ -879,14 +937,6 @@ header{
   overflow: hidden;
   transform: translateY(-50%);
   font-family:'Cormorant Garamond',serif;
-}
-
-.contact-heading .tall-frame{
-  position:relative;
-  width:clamp(50px, 15%, 100px);
-  aspect-ratio:2/3;
-  flex-shrink:0;
-  align-self:stretch;
 }
 
 .anim-typewriter{
@@ -983,23 +1033,139 @@ header{
 @media (max-width: 600px){
   .contact{padding:80px 24px 100px;}
   .contact-submit{align-self:stretch;}
-  .contact-heading{
-    flex-direction:column;
-    align-items:flex-start;
-    gap:16px;
-  }
-  .heading-top,
-  .heading-bottom{
-    align-items:flex-start;
-    text-align:left;
-  }
-  .contact-heading .tall-frame{
-    width:100%;
-    max-width:220px;
-    aspect-ratio:3/4;
-  }
 }
 
+/* ---------- FOOTER ---------- */
+.site-footer{
+  background:#ded9cd;
+  color:#241f16;
+}
+
+.footer-inner{
+  display:grid;
+  grid-template-columns:auto 1fr 1fr;
+  gap:56px;
+  max-width:1200px;
+  margin:0 auto;
+  padding:64px 48px 32px;
+  align-items:start;
+}
+
+.footer-logo{
+  width:130px;
+  height:auto;
+  display:block;
+}
+
+.footer-name{
+  font-family:'Jost',sans-serif;
+  font-weight:600;
+  font-size:1.05rem;
+  margin-bottom:4px;
+}
+
+.footer-role{
+  font-size:0.85rem;
+  color:#6b6250;
+  margin-bottom:18px;
+}
+
+.footer-line{
+  font-size:0.9rem;
+  margin-bottom:6px;
+}
+
+.footer-line a{
+  font-weight:600;
+  text-decoration:underline;
+}
+
+.footer-socials{
+  display:flex;
+  gap:14px;
+  margin-top:14px;
+}
+
+.footer-socials a{
+  opacity:0.85;
+  transition:opacity .2s ease;
+}
+
+.footer-socials a:hover{
+  opacity:1;
+}
+
+.footer-brokerage-name{
+  font-family:'Jost',sans-serif;
+  font-weight:600;
+  font-size:0.85rem;
+  letter-spacing:0.06em;
+  text-transform:uppercase;
+  margin-bottom:14px;
+}
+
+.footer-address{
+  font-size:0.9rem;
+  line-height:1.7;
+  color:#4a4234;
+}
+
+.footer-legal{
+  max-width:1200px;
+  margin:0 auto;
+  padding:20px 48px 32px;
+  border-top:1px solid rgba(36,31,22,0.15);
+}
+
+.footer-legal p{
+  font-size:0.78rem;
+  color:#6b6250;
+}
+
+.footer-legal a{
+  margin-left:10px;
+  padding-left:10px;
+  border-left:1px solid rgba(36,31,22,0.25);
+  text-decoration:underline;
+  color:#6b6250;
+}
+
+@media (max-width: 900px){
+  .footer-inner{
+    grid-template-columns:1fr 1fr;
+    grid-template-areas:
+      "brand agent"
+      "brand brokerage";
+    gap:32px;
+  }
+  .footer-brand{ grid-area:brand; }
+  .footer-agent{ grid-area:agent; }
+  .footer-brokerage{ grid-area:brokerage; }
+}
+
+@media (max-width: 600px){
+  .footer-inner{
+    grid-template-columns:1fr;
+    grid-template-areas:
+      "brand"
+      "agent"
+      "brokerage";
+    padding:48px 24px 24px;
+  }
+  .footer-legal{
+    padding:16px 24px 24px;
+  }
+  .footer-legal p{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+  }
+  .footer-legal a{
+    margin-left:0;
+    padding-left:0;
+    border-left:none;
+  }
+}
 
 @media (prefers-reduced-motion: reduce){
   *{animation:none !important; transition:none !important;}

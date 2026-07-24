@@ -6,52 +6,43 @@
 // parsing, and always in document order (safe even though this file
 // itself has no other scripts to run after).
 
+// Watches an element until it scrolls into view, then runs a callback
+// once and stops watching — the shared shape behind every scroll-
+// triggered reveal on this page (photos, the contact heading, and
+// later the listings cards).
+function revealOnScroll(target, threshold, onReveal) {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          onReveal(entry.target);
+          observer.disconnect();
+        }
+      });
+    },
+    { threshold },
+  );
+  observer.observe(target);
+}
+
 const fp = document.getElementById("featurePhoto");
-const io = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) {
-        fp.classList.add("in-view");
-        io.disconnect();
-      }
-    });
-  },
-  { threshold: 0.2 },
-);
-io.observe(fp);
+revealOnScroll(fp, 0.2, (el) => el.classList.add("in-view"));
 
 const portraitFrame = document.getElementById("portraitFrame");
 const aboutSection = document.querySelector(".aboutMe");
-const portraitObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) {
-        portraitFrame.classList.add("revealed");
-        portraitObserver.disconnect();
-      }
-    });
-  },
-  { threshold: 0.2 },
-);
-portraitObserver.observe(aboutSection);
+revealOnScroll(aboutSection, 0.2, () => portraitFrame.classList.add("revealed"));
 
-// The tall-frame photo now lives in the contact section heading, far
-// down the page from aboutMe — it gets its own observer watching
-// itself directly, so its reveal animation fires when it actually
-// scrolls into view rather than whenever aboutMe does.
+// The tall-frame photo lives in the contact section, far down the
+// page from aboutMe — it gets its own observer watching itself
+// directly, so its reveal fires when it actually scrolls into view.
 const tallFrame = document.getElementById("tallFrame");
-const tallFrameObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((e) => {
-      if (e.isIntersecting) {
-        tallFrame.classList.add("revealed");
-        tallFrameObserver.disconnect();
-      }
-    });
-  },
-  { threshold: 0.2 },
-);
-tallFrameObserver.observe(tallFrame);
+revealOnScroll(tallFrame, 0.2, (el) => el.classList.add("revealed"));
+
+// Typewriter heading in the contact section — starts typing only once
+// it scrolls into view. anim-typewriter isn't in its class list at
+// page load; adding it here is what actually starts the CSS animation.
+const contactHeadingTypewriter = document.getElementById("contactHeadingTypewriter");
+revealOnScroll(contactHeadingTypewriter, 0.2, (el) => el.classList.add("anim-typewriter"));
 
 /* =========================================================
      FEATURED LISTINGS — powered by Airtable via a secure proxy
@@ -161,22 +152,98 @@ function setupRevealAnimation() {
   // scrolls into view. All cards reveal together on that single trigger,
   // so scrolling the row horizontally afterward never re-triggers anything.
   const section = document.querySelector(".listings");
-  const sectionObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          cards.forEach((card) => card.classList.add("revealed"));
-          sectionObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.15 },
-  );
-
-  sectionObserver.observe(section);
+  revealOnScroll(section, 0.15, () => {
+    cards.forEach((card) => card.classList.add("revealed"));
+  });
 }
 
 loadListings();
+
+/* =========================================================
+     TESTIMONIALS — powered by Google Places via a secure proxy
+     -----------------------------------------------------
+     The browser never talks to Google directly and never sees your
+     API key. Instead it calls /api/testimonials, which netlify.toml
+     redirects to a small serverless function (see
+     /netlify/functions/testimonials.js) that runs on Netlify's
+     servers. The key lives there as an environment variable — set
+     it in your Netlify project:
+
+ Netlify dashboard → your site → Site configuration →
+ Environment variables → add:
+   GOOGLE_PLACES_API_KEY = AIzaSy...
+   GOOGLE_PLACE_ID        = ChIJ...
+
+     Redeploy after adding them. Google only ever returns up to 5
+     reviews per place through this API — that's a fixed limit on
+     Google's end, not something this code can change.
+
+     No reveal animation on these cards yet — that's for later.
+     ========================================================= */
+
+const testimonialsTrack = document.getElementById("testimonialsTrack");
+const testimonialsStatus = document.getElementById("testimonialsStatus");
+
+// Review text and reviewer names are public, user-submitted content
+// from Google — unlike the Airtable/YouTube data elsewhere on this
+// page, this isn't something we control, so it gets escaped before
+// going into innerHTML rather than interpolated directly.
+function escapeHtml(str) {
+  const div = document.createElement("div");
+  div.textContent = str ?? "";
+  return div.innerHTML;
+}
+
+async function loadTestimonials() {
+  try {
+    const res = await fetch("/api/testimonials");
+    if (!res.ok) throw new Error(`Server responded ${res.status}`);
+    const data = await res.json();
+    renderTestimonials(data.testimonials || []);
+  } catch (err) {
+    console.error("Could not load testimonials:", err);
+    testimonialsStatus.textContent =
+      "Testimonials couldn't be loaded right now — please check back shortly.";
+  }
+}
+
+function renderTestimonials(testimonials) {
+  if (testimonials.length === 0) {
+    testimonialsStatus.textContent = "No reviews to show yet.";
+    return;
+  }
+
+  testimonialsTrack.innerHTML = "";
+
+  testimonials.forEach((testimonial) => {
+    const filledStars = Math.round(testimonial.rating || 0);
+    const stars = "★".repeat(filledStars) + "☆".repeat(5 - filledStars);
+
+    const card = document.createElement("article");
+    card.className = "testimonial-card";
+    card.innerHTML = `
+  <div class="testimonial-stars" aria-label="${filledStars} out of 5 stars">${stars}</div>
+  <p class="testimonial-text">"${escapeHtml(testimonial.text)}"</p>
+  <p class="testimonial-name">— ${escapeHtml(testimonial.name)}</p>
+`;
+    testimonialsTrack.appendChild(card);
+  });
+
+  setupTestimonialsScrollArrows();
+}
+
+function setupTestimonialsScrollArrows() {
+  const step = () =>
+    testimonialsTrack.querySelector(".testimonial-card").offsetWidth + 24;
+  document.getElementById("testimonialsScrollLeft").addEventListener("click", () => {
+    testimonialsTrack.scrollBy({ left: -step(), behavior: "smooth" });
+  });
+  document.getElementById("testimonialsScrollRight").addEventListener("click", () => {
+    testimonialsTrack.scrollBy({ left: step(), behavior: "smooth" });
+  });
+}
+
+loadTestimonials();
 
 /* =========================================================
    SOCIALS TAPE ENGINE
